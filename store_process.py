@@ -9,8 +9,7 @@ config_p = ConfigParser()
 
 import settings
 
-# Function to start the driver
-def start_driver(driver_name, url):
+def start_driver(driver_name, url) -> webdriver.Edge:
     try:
         settings.log(f"Iniciando Driver: {driver_name} in {url}.")
         driver = webdriver.Edge()
@@ -26,7 +25,7 @@ def start_driver(driver_name, url):
 #============================================================================================
 # Main process for each marketplace: searching, extracting data, and navigating pages
 #============================================================================================
-def page_process(driver, market_section, product_search, name_in_product, marketplace):
+def page_process(driver, market_section, product_search, name_in_product, marketplace) -> bool:
     """
     Processes a single page of product results, extracting data and navigating to the next page.
 
@@ -117,7 +116,7 @@ def page_process(driver, market_section, product_search, name_in_product, market
         settings.log(f"Erro ao clicar na próxima página: {str(e)}. Finalizando coleta em {marketplace}.", "ERROR")
         return False
 
-def main_process_marketplace(driver, product_search, name_in_product, marketplace):
+def main_process_marketplace(driver, product_search, name_in_product, marketplace) -> None:
     try:
         config_p.read("elements.ini")
         market_section = config_p[marketplace]
@@ -138,17 +137,17 @@ def main_process_marketplace(driver, product_search, name_in_product, marketplac
         ) 
     except Exception as e:
         settings.log(f"Erro na busca: {str(e)}", "ERROR")
-        return settings.CACHE[marketplace]
+        return
     
     # Page processing loop
     while page_process(driver, market_section, product_search, name_in_product, marketplace):
         pass
-    return settings.CACHE[marketplace]
+    return
 
 #============================================================================================
 # Functions to write data to Excel and generate a summary of results
 #============================================================================================
-def products_to_excel():
+def products_to_excel() -> bool:
     try:
         with pandas.ExcelWriter(f"{settings.DIRS['DATA']}/{settings.FILES_NAMES['EXCEL']}", mode='w', engine='openpyxl') as writer:
             for market, products in settings.CACHE.items():
@@ -159,7 +158,7 @@ def products_to_excel():
         settings.log(f"Erro ao escrever dados em Excel: {str(e)}", "ERROR")
         return False
 
-def make_resume():
+def make_resume() -> None:
     media = {}
     for market, products in settings.CACHE.items():
         settings.log(f"Resumo para {market}: {len(products)} produtos encontrados.", "RESUME")

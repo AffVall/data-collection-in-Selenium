@@ -52,7 +52,6 @@ def main():
         t.start()
     for t, market in threads:
         t.join()
-        settings.log(f"Thread de {market.upper()} finalizada", "DEBUG")
     
     settings.log(f"Todas threads finalizadas. Processando {len(settings.CACHE)} marketplaces")
     store_process.products_to_excel()

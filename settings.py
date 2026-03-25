@@ -16,11 +16,11 @@ DIRS = {
     "RESUME": "resume"
 }
 
-def ensure_dirs():
+def ensure_dirs() -> None:
     for d in DIRS.values():
         Path(d).mkdir(parents=True, exist_ok=True)
 
-def log( message, level="INFO", txt = True):
+def log( message, level="INFO", txt = True) -> bool:
     print(f"[{strftime('%H:%M:%S')}] {level.upper()}: {message}")
     if level.upper() == "DEBUG" and not LOG_DEBUG or not txt:
         return False
@@ -28,7 +28,7 @@ def log( message, level="INFO", txt = True):
         if txt: log_file.write(f"[{strftime('%H:%M:%S')}] {level.upper()}: {message}\n")
     return True
 
-def approach(*Args):
+def approach(*Args) -> tuple:
     log(f"Args Recebidos: {Args}", "DEBUG")
     """    
     This function can be expanded to handle different formats from various marketplaces.
