@@ -6,7 +6,7 @@ LOG_DEBUG = False
 CACHE = {}
 
 FILES_NAMES = {
-    "LOG": f"{TIME_FORMAT}.txt",
+    "LOG": f"{TIME_FORMAT}.log",
     "EXCEL": f"{TIME_FORMAT}.xlsx",
     "RESUME": f"{TIME_FORMAT}.txt"
 }
