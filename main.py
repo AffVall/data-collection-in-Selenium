@@ -28,8 +28,7 @@ def main():
     settings.log(f"Cache inicializado para marketplaces: {settings.CACHE}", "DEBUG")
 
     def run_market(driver, search, name_flag, market):
-        results = store_process.main_process_marketplace(driver, search, name_flag, market)
-        settings.CACHE[market] = results
+        store_process.main_process_marketplace(driver, search, name_flag, market)
 
     threads = []
     for idx, market in enumerate(markets, start=1):

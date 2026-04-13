@@ -91,11 +91,17 @@ def page_process(driver, market_section, product_search, name_in_product, market
             error = True
         
         try:
-            settings.CACHE[marketplace].append({
-                "Nome": name,
-                "Preço": value,
-                "Link": url
-            })
+            if name is not None and value is not None and url is not None:
+                settings.CACHE[marketplace].append({
+                    "Nome": name,
+                    "Preço": value,
+                    "Link": url
+                })
+                settings.log(f"Produto adicionado: {name} - R${value}", "DEBUG")
+            else:
+                settings.log(f"Produto ignorado por dados incompletos: Nome={name}, Preço={value}, Link={url}", "DEBUG")
+                error = True
+                error_count += 1
         except Exception as e:
             settings.log(f"Erro ao adicionar produto à lista: {str(e)}", "ERROR")
             error_count += 1
@@ -116,7 +122,7 @@ def page_process(driver, market_section, product_search, name_in_product, market
         settings.log(f"Erro ao clicar na próxima página: {str(e)}. Finalizando coleta em {marketplace}.", "ERROR")
         return False
 
-def main_process_marketplace(driver, product_search, name_in_product, marketplace) -> None:
+def main_process_marketplace(driver, product_search, name_in_product, marketplace) -> list:
     try:
         config_p.read("elements.ini")
         market_section = config_p[marketplace]
@@ -137,12 +143,13 @@ def main_process_marketplace(driver, product_search, name_in_product, marketplac
         ) 
     except Exception as e:
         settings.log(f"Erro na busca: {str(e)}", "ERROR")
-        return
+        return settings.CACHE[marketplace]
     
     # Page processing loop
     while page_process(driver, market_section, product_search, name_in_product, marketplace):
         pass
-    return
+    settings.log(f"Coleta finalizada para {marketplace}. Total de produtos: {len(settings.CACHE[marketplace])}", "DEBUG")
+    return settings.CACHE[marketplace]
 
 #============================================================================================
 # Functions to write data to Excel and generate a summary of results
